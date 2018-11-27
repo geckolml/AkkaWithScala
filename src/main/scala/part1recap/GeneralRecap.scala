@@ -1,5 +1,7 @@
 package part1recap
 
+import scala.util.Try
+
 object GeneralRecap extends App{
 
   val aCondition: Boolean = false
@@ -98,9 +100,23 @@ object GeneralRecap extends App{
   // "collections"
   // Option and Try
   val anOption = Some(2)
-  val aTry = try{
-    throw new RunTimeException
+  val aTry = Try {
+    throw new RuntimeException
   }
 
   //pattern matching
+
+  val unknown = 2
+  val order = unknown match{
+    case 1 => "first"
+    case 2 => "second"
+    case _ => "unknown"
+  }
+
+  val bob = Person("Bob", 22)
+  val greeting = bob match {
+    case Person(n, _) => s"Hi, my name is $n"
+    case _ => "I don't know my name"
+  }
+
 }
