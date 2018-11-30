@@ -1,6 +1,7 @@
 package part2actors
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import part2actors.ActorCapabilities.{Counter, system}
 import part2actors.ChangingActorBehavior.Mom.MomStart
 
 object ChangingActorBehavior extends App{
@@ -108,6 +109,75 @@ object ChangingActorBehavior extends App{
     2. sadReceive
     2. happyReceive
 
-
    */
+
+  /**
+    * Exercises
+    * 1 - Recreate the Counter Actor with context.become and NO MUTABLE STATE
+    */
+
+  object Counter {
+    case object Increment
+    case object Decrement
+    case object Print
+  }
+
+
+  class Counter extends Actor {
+    import Counter._
+
+    var count = 0
+
+    override def receive: Receive = countReceive(0)
+
+    def countReceive(currentCount: Int): Receive = {
+      case Increment => context.become(countReceive(currentCount + 1))
+      case Decrement => context.become(countReceive(currentCount - 1))
+      case Print =>
+    }
+  }
+
+  import Counter._
+  val counter = system.actorOf(Props[Counter], "myCounter")
+
+  (1 to 5).foreach(_ => counter ! Increment)
+  (1 to 3).foreach(_ => counter ! Decrement)
+  counter ! Print
+
+  /**
+    * Exercises 2 - a simplified voting system
+    */
+  case class Vote(candidate: String)
+  case object VoteStatusRequest
+  case class VoteStatusReply(candidate: Option[String])
+  class Citizen extends Actor {
+    override def receive: Receive = ??? // TODO
+  }
+
+  case class AggregatorVotes(citizens: Set[ActorRef])
+  class VoteAggregator extends Actor {
+    override def receive: Receive = ??? // TODO
+  }
+
+  val alice = system.actorOf(Props[Citizen])
+  val bob = system.actorOf(Props[Citizen])
+  val charlie = system.actorOf(Props[Citizen])
+  val daniel = system.actorOf(Props[Citizen])
+
+  alice ! Vote("Martin")
+  bob ! Vote("Jonas")
+  charlie ! Vote("Roland")
+  daniel ! Vote("Roland")
+
+  val voteAggregator = system.actorOf(Props[VoteAggregator])
+  voteAggregator ! AggregatorVotes(Set(alice, bob, charlie, daniel))
+
+  /*
+     Print the status of the votes
+
+     Martin -> 1
+     Jonas -> 1
+     Roland -> 2
+   */
+
 }
