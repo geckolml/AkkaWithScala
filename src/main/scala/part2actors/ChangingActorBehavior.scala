@@ -5,13 +5,13 @@ import part2actors.ChangingActorBehavior.Mom.MomStart
 
 object ChangingActorBehavior extends App{
 
-
   object FussyKid {
     case object KidAccept
     case object KidReject
     val HAPPY = "happy"
     val SAD = "sad"
   }
+
   class FussyKid extends Actor {
     import FussyKid._
     import Mom._
@@ -71,12 +71,11 @@ object ChangingActorBehavior extends App{
   val statelessFussyKid = system.actorOf(Props[StatelessFussyKid])
   val mom = system.actorOf(Props[Mom])
 
-
   mom ! MomStart(statelessFussyKid)
 
   /**
     * mom receives Mom Start
-    *   kid receives Food(veg) -> kid wil change the handler to sadReceive
+    *   kid receives Food(veg) -> kid will change the handler to sadReceive
     *   kid receives Ask(play?) -> kid replies with the sadReceive handler =>
     * mom receives KidReject
     */
